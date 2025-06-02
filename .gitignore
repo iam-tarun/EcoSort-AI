@@ -140,3 +140,4 @@ dist
 eco-sort-data/
 data/
 .DS_Store
+models/
