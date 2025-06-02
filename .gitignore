@@ -141,3 +141,4 @@ eco-sort-data/
 data/
 .DS_Store
 models/
+backend/__pycache__/
