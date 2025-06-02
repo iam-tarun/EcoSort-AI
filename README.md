@@ -1,1 +1,1 @@
-# WasteSorter AI
+# Recycnet AI
