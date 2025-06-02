@@ -1,1 +1,1 @@
-# EcoSort-AI
+# WasteSorter AI
