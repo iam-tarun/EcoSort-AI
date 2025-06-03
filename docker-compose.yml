@@ -5,7 +5,7 @@ services:
     container_name: recycnet-backend
     restart: always
     volumes:
-      - ~/app/models:/app/models:ro
+      - /home/tarun/app/models:/app/models:ro
     environment:
       - MODEL_PATH=/app/models/recycnetAI-10
     networks:
