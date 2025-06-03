@@ -16,7 +16,7 @@ services:
     ports:
       - "8003:80"
     environment:
-      - REACT_APP_API=http://recycnet-backend:8000/classify
+      - REACT_APP_API=https://recycnetai.tarunteja.dev/classify
     networks:
       - recycnet-network
   
