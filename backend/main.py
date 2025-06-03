@@ -22,7 +22,8 @@ app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=["https://recycnetAI.tarunteja.dev"],
+  # allow_origins=["https://recycnetAI.tarunteja.dev"],
+  allow_origins=["*"],
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"]
