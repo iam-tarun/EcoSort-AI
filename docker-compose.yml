@@ -11,7 +11,10 @@ services:
       - recycnet-network
     
   frontend:
-    build: ./recycnet-ai
+    build:
+      context: ./recycnet-ai
+      args:
+        REACT_APP_API: https://recycnetai.tarunteja.dev/classify
     container_name: recycnet-frontend
     ports:
       - "8003:80"
