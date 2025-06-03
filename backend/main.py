@@ -22,8 +22,8 @@ app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
   CORSMiddleware,
-  # allow_origins=["https://recycnetAI.tarunteja.dev"],
-  allow_origins=["*"],
+  allow_origins=["http://recycnet-frontend"],
+  # allow_origins=["*"],
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"]
@@ -41,8 +41,8 @@ class_labels = ["biodegradable", "hazardous", "non-recyclable", "recyclable"]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model_path = os.getenv("model_path", "../models/recycnetAI-5")
-model = torch.load("../models/recycnetAI-5", weights_only=False, map_location=device)
+model_path = os.getenv("MODEL_PATH", "../models/recycnetAI-5")
+model = torch.load(model_path, weights_only=False, map_location=device)
 model.eval().to(device)
 
 @app.post("/classify")
