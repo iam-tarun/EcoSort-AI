@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import classify from './fastService';
 
 function FileDropZone() {
@@ -9,6 +9,27 @@ function FileDropZone() {
   const [classification, setClassification] = useState(null);
   const [conf, setConf] = useState(null);
   const [fileSubmitted, setFileSubmitted] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+
+  const handleClickToUpload = (e) => {
+    if(!file)
+    fileInputRef.current.click();
+  };
+
+  const handleFileSelect = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type.startsWith('image/')) {
+      setFile(selectedFile);
+      setPreviewURL(URL.createObjectURL(selectedFile))
+    } else {
+      alert('Please select a valid image file.');
+    }
+  }
+
+
+  const [loading, setLoading] = useState(false);
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
@@ -42,12 +63,30 @@ function FileDropZone() {
   const handleFileSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setLoading(true);
     setFileSubmitted(true);
+    try {
+      const result = await classify(file);
+      setConf(result.confidence_score);
+      setClassification(result.prediction_class);
+      setLoading(false);
+    } catch (error) {
+      alert("Error classifying image. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    const result = await classify(file);
-    console.log(result);
-    setConf(result.confidence_score);
-    setClassification(result.prediction_class);
+  const handleFileClose = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setFile(null);
+    setClassification(null);
+    setFileSubmitted(false);
+    setConf(null);
+    setPreviewURL(null);
   }
 
   return (
@@ -55,30 +94,35 @@ function FileDropZone() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      onClick={handleClickToUpload}
     >
-      {file ? (
-        <>
+      {file && !loading ? (
+        <div className='drop-display' >
+        <button className="close" onClick={handleFileClose} >x</button>
         <div className='preview-img-wrapper' >
-        <img src={previewURL} alt="preview" /> 
+          <img src={previewURL} alt="preview" /> 
         </div>
         <div>
-          <button onClick={handleFileSubmit} >Submit</button>
+          <button className='submit' disabled={fileSubmitted} onClick={handleFileSubmit} >Submit</button>
         </div>
         {
           (classification && fileSubmitted) ? (
-            <> 
-              <div>
+              <div className='results' >
                 <h4>It is {classification}</h4>
-                <h4>Confidence Score {conf * 100}</h4>
+                <h4>Confidence Score: {Math.trunc(conf * 100)}</h4>
               </div>
-            </>
           ) : (
             <></>
           )
         }
+        </div>
+      ): !file && !loading ? (
+        <>
+        <input type="file" accept="image/*" style={{display: 'none'}} ref={fileInputRef} onChange={handleFileSelect} capture="environment" />
+        <p> Drag & Drop or click to upload your image here </p>
         </>
-      ): (
-        <p> Drag & Drop your file here </p>
+      ) : (
+        <div className="loading-spinner"></div>
       )}
     </div>
   )
